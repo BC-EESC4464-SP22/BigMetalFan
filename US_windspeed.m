@@ -35,12 +35,12 @@ for i = 1:length(lat)
 end
 coord = horzcat(r_lat,r_lon);
 
-% unique coordinates (lat,lon) at 1.00 degree resolution
+% unique coordinates (lat,lon) at 0.50 degree resolution
 u_coord = unique(coord,'rows','stable');
 u_lat = unique(u_coord(:,1),'sorted');
 u_lon = unique(u_coord(:,2),'sorted');
 
-% wind speed at 1.00 degree resolution
+% wind speed at 0.50 degree resolution
 avg_windspd = nan(length(u_coord),1);
 for k = 1:length(u_coord)
     ind = find(coord(:,1) == u_coord(k,1) & coord(:,2) == u_coord(k,2));
@@ -91,7 +91,7 @@ usamap conus
 %geoshow(coastlat,coastlon,'Color','k')
 plotm(coastlat,coastlon,'k')
 %contourfm(u_coord(:,1), u_coord(:,2), avg_windspd,'linecolor','none');
-contourfm(u_lat,u_lon,windspd_grid','linecolor','none')
+contourfm(u_lat,u_lon,windspd_grid','linecolor','none');
 cmocean('-ice')
 bordersm('continental us','k')
 
@@ -104,14 +104,15 @@ bordersm('continental us','k')
 
 cb = contourcbar("southoutside");
 
-title('Modeled Wind Speed - Contiguous United States')
-cb.XLabel.String = 'Wind Speed (meters per second)';
+title('Modeled Average Wind Speed (2007-2013)')
+cb.XLabel.String = 'Wind Speed (m/s)';
 
 %% Create Map of Turbine Locations
 
 figure(1); hold on
-
-plotm(lat_turb,lon_turb,'r.','markersize',5)
+tl = plotm(lat_turb,lon_turb,'r.','markersize',5);
+leg = legend([tl]);
+leg.String = {'Wind Turbine'};
 hold off
 % figure(2)
 % usamap conus

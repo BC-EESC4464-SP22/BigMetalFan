@@ -17,9 +17,6 @@ lat = table2array(data(:,3));
 lon = table2array(data(:,2));
 windspd = table2array(data(:,9));
 
-%% Filter Out Non-US Data
-
-
 %% Redefine resolution to be 0.50 degrees
 
 maxlat = round(max(lat));
@@ -38,12 +35,12 @@ for i = 1:length(lat)
 end
 coord = horzcat(r_lat,r_lon);
 
-% unique coordinates (lat,lon) at 1.00 degree resolution
+% unique coordinates (lat,lon) at 0.50 degree resolution
 u_coord = unique(coord,'rows','stable');
 u_lat = unique(u_coord(:,1),'sorted');
 u_lon = unique(u_coord(:,2),'sorted');
 
-% wind speed at 1.00 degree resolution
+% wind speed at 0.50 degree resolution
 avg_windspd = nan(length(u_coord),1);
 for k = 1:length(u_coord)
     ind = find(coord(:,1) == u_coord(k,1) & coord(:,2) == u_coord(k,2));
@@ -54,12 +51,12 @@ end
 all = horzcat(u_coord,avg_windspd);
 
 %% Filter Out Non-US Data
-for i = 1:length(u_lat)
-    if u_lat(i) < 23.5
-        u_lat(i) = nan
-        u_lon
-    end
-end
+% for i = 1:length(u_lat)
+%     if u_lat(i) < 23.5
+%         u_lat(i) = nan
+%         u_lon
+%     end
+% end
 
 %% Create Windspeed Grid
 
@@ -70,8 +67,11 @@ windspd_grid(1,2:end) = u_lat;
 for i = 1:length(all)
     latInd = find(windspd_grid(1,:) == all(i,1));
     lonInd = find(windspd_grid(:,1) == all(i,2));
-    if lat
-    windspd_grid(lonInd,latInd) = all(i,3);
+    if all(i,1) < 24.5 % filter out southern-most data in Mexico
+        windspd_grid(lonInd,latInd) = nan;
+    else
+        windspd_grid(lonInd,latInd) = all(i,3);
+    end
 end
 
 windspd_grid = windspd_grid(2:end,2:end);
@@ -91,7 +91,7 @@ usamap conus
 %geoshow(coastlat,coastlon,'Color','k')
 plotm(coastlat,coastlon,'k')
 %contourfm(u_coord(:,1), u_coord(:,2), avg_windspd,'linecolor','none');
-contourfm(u_lat,u_lon,windspd_grid','linecolor','none')
+contourfm(u_lat,u_lon,windspd_grid','linecolor','none','HandleVisibility','off');
 cmocean('-ice')
 bordersm('continental us','k')
 
@@ -104,17 +104,20 @@ bordersm('continental us','k')
 
 cb = contourcbar("southoutside");
 
-title('Modeled Wind Speed - Contiguous United States')
-cb.XLabel.String = 'Wind Speed (meters per second)';
+title('Modeled Average Wind Speed (2007-2013)')
+cb.XLabel.String = 'Wind Speed (m/s)';
 
 %% Create Map of Turbine Locations
 
 figure(1); hold on
-
-plotm(lat_turb,lon_turb,'r.','markersize',5)
+tl = plotm(lat_turb,lon_turb,'r.','markersize',5);
+leg = legend([tl],'Location','South');
+leg.String = {'Wind Turbine'};
 hold off
 % figure(2)
 % usamap conus
 % plotm(coastlat,coastlon,'k')
 % gb = bubble(lat_turb,lon_turb);
 % geolimits([22.00 50.00],[-125 -66])
+
+%% Wind Speed Variability 

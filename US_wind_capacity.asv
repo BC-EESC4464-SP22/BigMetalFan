@@ -6,12 +6,12 @@ addpath('C:\Users\smano32\OneDrive\Desktop\Envi_Data&Exp\FinalProject_Datasets\w
 % 
 filename1 = 'pot_wind_cap_110_current.csv';
 
-data1 = readtable(filename1);
+data1 = readtable(filename);
 
-lat_1 = table2array(data1(:,3));
-lon_1 = table2array(data1(:,4));
-tot_area = table2array(data1(:,6));
-area40 = table2array(data1(:,10));
+lat_1 = table2array(data(:,3));
+lon_1 = table2array(data(:,4));
+tot_area = table2array(data(:,6));
+area40 = table2array(data(:,10));
 ratio40 = (area40./tot_area);
 
 %look at data for wind capacity of 40% or higher because average cap was
@@ -83,19 +83,18 @@ end
 
 capfact_grid = capfact_grid(2:end,2:end);
 
-%% Filter Area Data
+%% Filter Data
 
-for i = 1:length(tot_area)
-    if area40(i) > tot_area(i)
-        ratio40(i) = nan;
-    end
-%     if ratio40(i) < 0.01
+% for i = 1:length(tot_area)
+%     if area40(i) > tot_area(i)
 %         ratio40(i) = nan;
 %     end
-end
-ratio40 = ratio40.*100;
+% %     if ratio40(i) < 0.01
+% %         ratio40(i) = nan;
+% %     end
+% end
 
-%% Create Map of Capacity Factor
+%% Create Map 
 load coastlines
 figure(1); clf
 usamap conus
@@ -104,11 +103,11 @@ contourfm(u_lat,u_lon,capfact_grid','linecolor','none');
 %scatterm(lat,lon,10,frac_area,'filled')
 bordersm('continental us','k')
 cb = contourcbar("southoutside");
-cmocean('speed') % nondiverging scheme
-%cmocean('delta','pivot',41) % diverging scheme
+%cmocean('speed')
+cmocean('delta','pivot',41)
 %title('Percent Area with Wind Capcity Factor 40%+ (Contiguous United States)')
-title('Modeled Wind Capacity Factor (2007-2013)')
-%title('') % title for diverging (none needed)
+%title('Modeled Wind Capacity Factor (2007-2013)')
+title('')
 cb.XLabel.String = 'Wind Capacity Factor (%)';
 
 % hold on
@@ -120,25 +119,10 @@ cb.XLabel.String = 'Wind Capacity Factor (%)';
 
 figure(1); hold on
 [turb_lat,turb_lon] = wind_turbine_locations();
-tl = plotm(turb_lat,turb_lon,'m.','markersize',5);
+tl = plotm(turb_lat,turb_lon,'r.','markersize',5);
 leg = legend([tl]);
 leg.String = {'Wind Turbine'};
 % icon = findobj(icon,'Type','patch');
 % icon = findobj(icon,'Marker','none','-xor');
 % set(icon,'MarkerSize',10);
 hold off
-
-%% Create Map of Capacity Factor Area
-load coastlines
-figure(2); clf
-usamap conus
-plotm(coastlat,coastlon,'k')
-scatterm(lat_1,lon_1,10,ratio40,'filled')
-bordersm('continental us','k')
-cb = contourcbar("southoutside");
-cmocean('matter')
-%cmocean('delta','pivot',41)
-%title('Percent Area with Wind Capcity Factor 40%+ (Contiguous United States)')
-%title('Modeled Wind Capacity Factor (2007-2013)')
-title('Land Area Available for Efficient Turbines')
-cb.XLabel.String = 'Area Available (%)';
