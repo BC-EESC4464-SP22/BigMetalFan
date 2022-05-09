@@ -101,7 +101,7 @@ indexConus = 1:numel(states);
 indexConus(indexHawaii|indexAlaska) = []; 
 
 % Colors
-stateColor0 = [0.61 0.71 1]; %5-10
+stateColor0 = [0.61 0.70 1]; %5-10
 % stateColor1 = [0.92 0.94 1];
 % stateColor1 = [1 0 1];
 stateColor2 = [0.77 0.83 1]; %0-5
@@ -111,11 +111,11 @@ stateColor3 = [1 1 1];
 %stateColor3 = [1 0 1];
 stateColor4 = [0.46 0.60 1]; %10-15
 % stateColor4 = [1 0 1];
-stateColor5 = [0.31 0.49 1]; %15-20
+stateColor5 = [0.31 0.45 1]; %15-20
 % stateColor5 = [1 0 1];
-stateColor6 = [0.17 0.39 1]; %20-25
+stateColor6 = [0.17 0.35 1]; %20-25
 % stateColor6 = [1 0 1];
-stateColor7 = [0 0.27 1]; %25-30
+stateColor7 = [0 0 1]; %25-30
 % stateColor7 = [1 0 1]; 
 
 % Display the three regions.
@@ -133,7 +133,7 @@ geoshow(ax(1), states(indicesSubset7),  'FaceColor', stateColor7)
 %     setm(ax(k), 'Frame', 'off', 'Grid', 'off',...
 %       'ParallelLabel', 'off', 'MeridianLabel', 'off')
 % end
-title('Wind Power Output by State (2021)')
+title('Utility Wind Power Output by State (2021)')
 leg = legend([t,t0,t1,t2,t3,t4,t5]);
-leg.String = {'<1 billion kWh','0-5 billion kWh','5-10 billion kWh','10-15 billion kWh','15-20 billion kWh (IL)','25-30 billion kWh (KS)','30+ billion kWh'};
+leg.String = {'0 billion kWh','0-5 billion kWh','5-10 billion kWh','10-15 billion kWh','15-20 billion kWh (IL)','25-30 billion kWh (KS)','30+ billion kWh'};
 uistack(ax,'bottom')
