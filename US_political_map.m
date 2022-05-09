@@ -67,11 +67,11 @@ year = year(ind_keep);
 
 data_new = horzcat(state_str,party_str,year_str);
 
-%% Filter Data for 2000-2020
+%% Filter Data for 2010-2020
 
 inds = nan(length(year),1);
 for k = 1:length(year)
-    if (year(k) >= 2010) && (year(k) <= 2020)
+    if (year(k) >= 1995) && (year(k) <= 2020)
         inds(k) = k;
     end
 end
