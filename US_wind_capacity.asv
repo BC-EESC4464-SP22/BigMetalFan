@@ -3,11 +3,11 @@
 % Paths will need to be adjusted per individual user
 addpath('C:\Users\smano32\OneDrive\Desktop\Envi_Data&Exp\FinalProject_Datasets\wind_capacity');
  
-filename1 = 'pot_wind_cap_110_current.csv'; % land area available
+filename1 = 'pot_wind_cap_110_current.csv';
 
 data1 = readtable(filename1);
 
-% Assign variables for area availability dataset
+% Assign variabl
 lat_1 = table2array(data1(:,3));
 lon_1 = table2array(data1(:,4));
 tot_area = table2array(data1(:,6));
@@ -20,11 +20,10 @@ ratio40 = (area40./tot_area); % calculate ratio of land area available
 addpath('C:\Users\smano32\OneDrive\Desktop\Envi_Data&Exp\FinalProject_Datasets');
 addpath('C:\Users\smano32\OneDrive\Desktop\Envi_Data&Exp\BigMetalFan\borders');
 
-filename = 'windspeeds_NREL.csv'; % NREL capacity factor dataset
+filename = 'windspeeds_NREL.csv';
 
 data = readtable(filename);
 
-% Assign variables for capacity factors
 lat = table2array(data(:,3));
 lon = table2array(data(:,2));
 capfact = table2array(data(:,10));
@@ -33,7 +32,7 @@ capfact = capfact.*100;
 rating = table2array(data(:,8));
 frac_area = table2array(data(:,6));
 
-%% Redefine resolution to be 0.50 degree
+%% Redefine resolution to be 0.50 degrees
 
 maxlat = round(max(lat));
 minlat = round(min(lat));
@@ -82,7 +81,7 @@ end
 capfact_grid = capfact_grid(2:end,2:end);
 
 %% Filter Area Data 
-% some area measurements appear to be misreported, portions with over 100%
+% some area measurements appear to be incorrect, portions with over 100%
 % area available
 for i = 1:length(tot_area)
     if area40(i) > tot_area(i)

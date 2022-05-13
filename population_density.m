@@ -1,5 +1,6 @@
 %% Add Paths
 
+% Paths will need to be adjusted per individual user
 % addpath('/Users/ginnyjablonski/Desktop/')
 % addpath('/Users/ginnyjablonski/Documents/GitHub/BigMetalFan/borders')
 addpath('C:\Users\smano32\OneDrive\Desktop\Envi_Data&Exp\FinalProject_Datasets');
@@ -8,7 +9,7 @@ addpath('C:\Users\smano32\OneDrive\Desktop\Envi_Data&Exp\BigMetalFan\borders');
 addpath('C:\Users\smano32\OneDrive\Desktop\Envi_Data&Exp\FinalProject_Datasets\USGS_wind_turbines');
 
 %filename = 'ACSST5Y2020.S0101_data_with_overlays_2022-04-26T171210.csv';
-filename = 'pop_data_manip.csv';
+filename = 'pop_data_manip.csv'; % this file has the unnecessary headers removed 
 county_pop = readtable(filename);
 
 %% Extract Data from Population Density
@@ -25,7 +26,7 @@ lat = table2array(uscounty(:,7));
 lon = table2array(uscounty(:,8));
 fips = table2array(uscounty(:,4));
 
-%% elimitating nonmatched fips
+%% Elimitating nonmatched fips
 matches=ismembertol(geoid3, fips, 0);
 countyid=(geoid3(matches));
 countyidpop=(pop(matches));
@@ -33,22 +34,21 @@ population=NaN(length(countyid), 1);
 samesizeid=ismembertol(countyid, fips, 0);
 fips2=(fips(samesizeid));
 
-%height?
 for i=1:length(countyid)
     population(fips2==countyid(i))=countyidpop(i);
 end
-%% update size of latlon
+%% Update size of latlon
 lat2=(lat(samesizeid));
 lon2=(lon(samesizeid));
 
-%% combining data to one array
+%% Combining data to one array
 
 datapart1 = NaN(length(population), 4);
 datapart1(:,1) = countyid;
 datapart1(:,2) = lat2;
 datapart1(:,3) = lon2;
 datapart1(:,4) = population;
-%% county area data
+%% County area data
 
 %readfile & make array
 filename = 'LND01_2.csv';
@@ -94,7 +94,7 @@ end
     
     
 
-%% redefine resolution
+%% Redefine resolution to 0.5 degree
 maxlat = round(max(finaldata(:,2)));
 minlat = round(min(finaldata(:,2)));
 maxlon = round(max(finaldata(:,3)));
@@ -105,11 +105,6 @@ r_lon = nan(length(finaldata(:,3)),1);
 for i = 1:length(finaldata(:,2))
      r_lat(i) = 0.5*round(finaldata(i,2)/0.5);
      r_lon(i) = 0.5*round(finaldata(i,3)/0.5);
-%     r_lat(i) = round(finaldata(i,2));
-%     r_lon(i) = round(finaldata(i,3));
-
- %       r_lat(i) = 5*round(lat(i)/5);
- %        r_lon(i) = 5*round(lon(i)/5);
 end
 coord = horzcat(r_lat,r_lon);
 
@@ -153,7 +148,6 @@ gridpop_east = gridpop(:,63:end);
 
 ind_east = find(u_lon >= -105);
 u_lon_east = u_lon(ind_east);
-%gridpop2 = gridpop(1:end,65:end);
 
 ind_west = find(all(:,2) < -105);
 west_all = all(ind_west,:);
@@ -161,26 +155,13 @@ west_all = all(ind_west,:);
 %% %% Create Map Without Turbine Ports
 load coastlines
 figure(1); clf
-%worldmap([23.5 50], [-127 -65])
 usamap conus
-% bordersm('continental us','k')
-%geoshow(coastlat,coastlon,'Color','k')
 plotm(coastlat,coastlon,'k')
-%contourfm(u_coord(:,1), u_coord(:,2), avg_windspd,'linecolor','none');
-%contourfm(u_lat,u_lon,gridpop,'linecolor','none')
 bordersm('continental us','k')
-
-%  for j = 1:length(avg_windspd)
-%      plotm(u_coord(j,1),u_coord(j,2),'g.','markersize',10)
-%  end
-
-%scatterm(u_coord(:,1),u_coord(:,2),15,avg_windspd,'filled')
-%scatterm(lat,lon,15,windspd,'filled')
 
 cb = contourcbar("southoutside");
 
 title('Log of Population Density in the Contiguous United States')
-%cb.XLabel.String = 'Wind Speed (meters per second)';
 
 %% Load in Turbine Points
 filename2 = 'uswtdb_v4_3_20220114.csv';

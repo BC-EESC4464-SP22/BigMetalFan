@@ -1,4 +1,7 @@
 %% Read in Data
+% function that takes no input and is called to return the latitude and
+% longitude coordinates turbines in the contiguous United States
+% Path will need to be adjusted per individual user
 function [turb_lat,turb_lon] = wind_turbine_locations()
 addpath('C:\Users\smano32\OneDrive\Desktop\Envi_Data&Exp\FinalProject_Datasets\USGS_wind_turbines');
 
@@ -10,6 +13,7 @@ turb_lat = table2array(data(:,27));
 turb_lon = table2array(data(:,26));
 
 %% Create Map of Turbine Locations
+% can uncomment to make a map and view turbine locations
 
 % load coastlines
 % figure(1); clf

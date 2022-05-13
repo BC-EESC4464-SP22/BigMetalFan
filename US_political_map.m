@@ -1,5 +1,6 @@
 %% Read in Data
 
+% Paths will need to be adjusted per individual user
 addpath('C:\Users\smano32\OneDrive\Desktop\Envi_Data&Exp\FinalProject_Datasets');
 addpath('C:\Users\smano32\OneDrive\Desktop\Envi_Data&Exp\FinalProject_Datasets\USGS_wind_turbines');
 %addpath('C:\Users\smano32\OneDrive\Desktop\Envi_Data&Exp\BigMetalFan\borders');
@@ -8,6 +9,7 @@ filename = 'united_states_governors_1775_2020.csv';
 
 data = readtable(filename);
 
+% Assign Variables
 state = table2array(data(:,2));
 party = table2array(data(:,4));
 year = table2array(data(:,5));
@@ -15,16 +17,10 @@ year = table2array(data(:,5));
 state_str = strings(length(state),1);
 party_str = strings(length(party),1);
 for i = 1:length(state)
-    %temp_s = char(state(i));
     state_str(i) = string(state(i));
-    %temp_p = char(party(i));
     party_str(i) = string(party(i));
 end
 year_str = string(num2str(year));
-
-%data_new = horzcat(state_str,party_str,year_str);
-%data_new = horzcat(data_new,year_str);
-
 
 %% Filter States to Iclude Only Lower 48
 
@@ -71,7 +67,7 @@ data_new = horzcat(state_str,party_str,year_str);
 
 inds = nan(length(year),1);
 for k = 1:length(year)
-    if (year(k) >= 1995) && (year(k) <= 2020)
+    if (year(k) >= 2010) && (year(k) <= 2020)
         inds(k) = k;
     end
 end
@@ -79,8 +75,11 @@ inds = inds(~isnan(inds));
 
 data_new_filt = data_new(inds,:);
 data_new_filt = sortrows(data_new_filt);
+
 %% Assign Political Affiliations to States
 
+% running sum, +1 added for Democratic year and -1 added for Republican
+% year
 score = zeros(length(u_state),1);
 for ii = 1:length(data_new_filt)
     state_ind = find(data_new_filt(ii,1) == u_state);
@@ -93,6 +92,8 @@ end
 
 associations = horzcat(u_state,score);
 
+% Positive sums indicate Democratic, negative sums indicate Republican,
+% sums equal to 0 are neutral
 rep_states = strings(length(associations),1);
 dem_states = strings(length(associations),1);
 neut_states = strings(length(associations),1);
@@ -120,17 +121,13 @@ t = plotm(80,-95,'ks','markersize',5,'MarkerFaceColor','blue');
 t0 = plotm(80,-95,'ks','markersize',5,'MarkerFaceColor','red');
 t1 = plotm(80,-95,'ks','markersize',5,'MarkerFaceColor',[0.4940 0.1840 0.5560]);
 
-% Map the USA Including Alaska and Hawaii
-% Map the USA with separate axes for Alaska and Hawaii.
-%ax = usamap('all');
+% Map contiguous USA
 ax = usamap('conus');
-%set(ax, 'Visible', 'off')
 states = shaperead('usastatelo', 'UseGeoCoords', true);
 names = {states.Name};
 % Indices
 indexHawaii = strcmp('Hawaii',names);
 indexAlaska = strcmp('Alaska',names);
-%statesSubset1 = {'Illinois', 'Texas'}; % Edit this list
 
 statesSubsetRep = {};
 for kk = 1:length(rep_states)
@@ -162,23 +159,13 @@ stateColor3 = [0 0 1]; % blue
 % Display the three regions.
 geoshow(ax(1), states(indexConus),  'FaceColor', stateColor3)
 geoshow(ax(1), states(indicesSubsetRep),  'FaceColor', stateColor2)
-%bordersm('continental us','k')
 geoshow(ax(1), states(indicesSubsetNeut), 'FaceColor', stateColor1)
-% geoshow(ax(3), states(indexHawaii), 'FaceColor', stateColor3)
-% Hide the frame.
-% for k = 1:3
-%     setm(ax(k), 'Frame', 'off', 'Grid', 'off',...
-%       'ParallelLabel', 'off', 'MeridianLabel', 'off')
-% end
 title('Generalized Political Affiliations of State Governors (2010-2020)')
 
 %% Plot Wind Turbine Locations
 
 figure(1); hold on
 [turb_lat,turb_lon] = wind_turbine_locations();
-% t = plotm(turb_lat,turb_lon,'ks','markersize',5,'MarkerFaceColor','blue','Visible','off');
-% t0 = plotm(turb_lat,turb_lon,'ks','markersize',5,'MarkerFaceColor','red','Visible','off');
-% t1 = plotm(turb_lat,turb_lon,'ks','markersize',5,'MarkerFaceColor',[0.4940 0.1840 0.5560],'Visible','off');
 t2 = plotm(turb_lat,turb_lon,'k.','markersize',5);
 leg = legend([t,t0,t1,t2]);
 leg.String = {'Democrat','Republican','Neutral','Wind Turbine'};
